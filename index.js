@@ -82,6 +82,8 @@ exports.handler = async (event, context) => {
             clientId: process.env.CLIENTID
         });
 
+        const a = 0;
+
         return {
             message: "success"
         }
