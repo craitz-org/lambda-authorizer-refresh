@@ -67,23 +67,11 @@ async function refreshToken(clientId, poolId, token) {
 
 exports.handler = async (event, context) => {
     try {
-        console.log(JSON.stringify({
-            clientid: '4icqdo0ia8ifbvmfpv0ptgt9s1',
-            poolid: 'us-east-1_YYTAAxPEa',
-            token: event.headers.Authorization
-        }));
-
         return await refreshToken(
-            '4icqdo0ia8ifbvmfpv0ptgt9s1',
-            'us-east-1_YYTAAxPEa',
+            process.env.CLIENTID,
+            process.env.POOLID,
             event.headers.Authorization
         );
-
-        // return await refreshToken(
-        //     process.env.CLIENTID,
-        //     process.env.POOLID,
-        //     event.headers.Authorization
-        // );
     } catch (err) {
         throw err;
     }
