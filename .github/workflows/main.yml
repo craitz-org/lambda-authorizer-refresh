@@ -30,11 +30,11 @@ jobs:
       - name: Serverless Install
         run: |
           npm install -g serverless
-      - name: npm install
-        env:
-          CI: true
-        run: |
-          npm ci
+      # - name: npm install
+      #   env:
+      #     CI: true
+      #   run: |
+      #     npm ci
       - name: Create config file
         run: |
           touch config.${{ env.STAGE_NAME }}.json
