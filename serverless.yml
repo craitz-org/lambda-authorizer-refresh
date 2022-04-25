@@ -7,6 +7,7 @@ service: ${self:custom.lambda_name}
 
 provider:
   name: aws
+  apiName: ${self:custom.lambda_name}-api
   endpointType: REGIONAL
   lambdaHashingVersion: 20201221
   stackName: ${self:custom.lambda_name}
