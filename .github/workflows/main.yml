@@ -14,7 +14,7 @@ env:
   AWS_REGION: us-east-1
 	RESTAPI_ID: "ucrw9xjluh",
 	RESTAPI_ROOT_ID: "czquit0hs4"
-  CLIENT_ID: ${{ secrets.GHACTIONS_CLIENTID_${STAGE_NAME_UPPER} }}
+  # CLIENT_ID: ${{ secrets.GHACTIONS_CLIENTID_${STAGE_NAME_UPPER} }}
 
 jobs:
   deploy_lambda:
