@@ -9,6 +9,8 @@ env:
   STAGE_NAME: dev
   STAGE_NAME_UPPER: DEV
   AWS_REGION: us-east-1
+  POOL_ID: ${{ secrets.GHACTIONS_POOLID_${STAGE_NAME_UPPER} }}
+  CLIENT_ID: ${{ secrets.GHACTIONS_CLIENTID_${STAGE_NAME_UPPER} }}
   RESTAPI_ID: ubyh63c352
   RESTAPI_ROOT_ID: 8sgb7a887g
 
@@ -37,12 +39,7 @@ jobs:
       - name: Create config file
         run: |
           touch config.${STAGE_NAME}.json
-          echo '{"poolid":"$POOL_ID","clientid":"$CLIENT_ID","restApiId":"$RESTAPI_ID","restApiRootResourceId":"RESTAPI_ROOT_ID"}' > config.${STAGE_NAME}.json
-        with:
-          POOL_ID: ${{ secrets.GHACTIONS_POOLID_${STAGE_NAME_UPPER} }}
-          CLIENT_ID: ${{ secrets.GHACTIONS_CLIENTID_${STAGE_NAME_UPPER} }}
-          RESTAPI_ID: ${RESTAPI_ID},
-          RESTAPI_ROOT_ID: ${RESTAPI_ROOT_ID}"
+          echo '{"poolid":"${POOL_ID}","clientid":"${CLIENT_ID}","restApiId":"${RESTAPI_ID}","restApiRootResourceId":"{RESTAPI_ROOT_ID}"}' > config.${STAGE_NAME}.json
       - name: Deploy Lambda
         run: |
           chmod +x .github/deploy.sh
