@@ -19,8 +19,8 @@ provider:
     restApiRootResourceId: ${file(./config.${opt:stage, 'dev'}.json):restApiRootResourceId}
   environment:
     STAGE: ${opt:stage, 'dev'}
-    POOLID: ${file(./config.${opt:stage, 'dev'}.json):poolid
-    CLIENTID: ${file(./config.${opt:stage, 'dev'}.json):clientid
+    POOLID: ${file(./config.${opt:stage, 'dev'}.json):poolid}
+    CLIENTID: ${file(./config.${opt:stage, 'dev'}.json):clientid}
 
 functions:
   func:
