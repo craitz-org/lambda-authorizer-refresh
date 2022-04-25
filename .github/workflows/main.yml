@@ -9,8 +9,8 @@ env:
   STAGE_NAME: prd
   STAGE_NAME_UPPER: PRD
   AWS_REGION: us-east-1
-	RESTAPI_ID: "ucrw9xjluh",
-	RESTAPI_ROOT_ID: "czquit0hs4"
+	RESTAPI_ID: ucrw9xjluh,
+	RESTAPI_ROOT_ID: czquit0hs4
 
 jobs:
   deploy_lambda:
