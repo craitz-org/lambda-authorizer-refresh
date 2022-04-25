@@ -1,0 +1,209 @@
+AWSTemplateFormatVersion: 2010-09-09
+Description: The AWS CloudFormation template for this Serverless application
+Resources:
+  FuncLogGroup:
+    Type: 'AWS::Logs::LogGroup'
+    Properties:
+      LogGroupName: /aws/lambda/lambda-authorizer-refresh-dev
+  FuncLambdaFunction:
+    Type: 'AWS::Lambda::Function'
+    Properties:
+      Handler: index.handler
+      Runtime: nodejs14.x
+      FunctionName: lambda-authorizer-refresh-dev
+      MemorySize: 128
+      Timeout: 30
+      Description: Refresh token for authorization microservice
+      Environment:
+        Variables:
+          STAGE: dev
+          POOLID: us-east-1_YYTAAxPEa
+          CLIENTID: 4icqdo0ia8ifbvmfpv0ptgt9s1
+          AWS_NODEJS_CONNECTION_REUSE_ENABLED: '1'
+      Role: 'arn:aws:iam::248567781489:role/lambda-authorizer-role'
+    DependsOn:
+      - FuncLogGroup
+  FuncLambdaVersionYPi1uD8JRrMVbyVVGatLeIkWNk4473peRRE9olTxs:
+    Type: 'AWS::Lambda::Version'
+    DeletionPolicy: Retain
+    Properties:
+      FunctionName: !Ref FuncLambdaFunction
+      CodeSha256: ZrEbXD82lQ4OWB8osJtuQIV5dRd1F2lhxSBQh8Qjdf4=
+      Description: Refresh token for authorization microservice
+  ApiGatewayResourceRefresh:
+    Type: 'AWS::ApiGateway::Resource'
+    Properties:
+      ParentId: 8sgb7a887g
+      PathPart: refresh
+      RestApiId: ubyh63c352
+  ApiGatewayMethodRefreshOptions:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      AuthorizationType: NONE
+      HttpMethod: OPTIONS
+      MethodResponses:
+        - StatusCode: '200'
+          ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+            method.response.header.Access-Control-Allow-Headers: true
+            method.response.header.Access-Control-Allow-Methods: true
+          ResponseModels: {}
+      RequestParameters: {}
+      Integration:
+        Type: MOCK
+        RequestTemplates:
+          application/json: '{statusCode:200}'
+        ContentHandling: CONVERT_TO_TEXT
+        IntegrationResponses:
+          - StatusCode: '200'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: '''*'''
+              method.response.header.Access-Control-Allow-Headers: >-
+                'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token,X-Amz-User-Agent'
+              method.response.header.Access-Control-Allow-Methods: '''OPTIONS,GET'''
+            ResponseTemplates:
+              application/json: ''
+      ResourceId: !Ref ApiGatewayResourceRefresh
+      RestApiId: ubyh63c352
+  ApiGatewayMethodRefreshGet:
+    Type: 'AWS::ApiGateway::Method'
+    Properties:
+      HttpMethod: GET
+      RequestParameters: {}
+      ResourceId: !Ref ApiGatewayResourceRefresh
+      RestApiId: ubyh63c352
+      ApiKeyRequired: false
+      AuthorizationType: NONE
+      Integration:
+        IntegrationHttpMethod: POST
+        Type: AWS
+        Uri: !Join 
+          - ''
+          - - 'arn:'
+            - !Ref 'AWS::Partition'
+            - ':apigateway:'
+            - !Ref 'AWS::Region'
+            - ':lambda:path/2015-03-31/functions/'
+            - !GetAtt 
+              - FuncLambdaFunction
+              - Arn
+            - /invocations
+        PassthroughBehavior: NEVER
+
+        IntegrationResponses:
+          - StatusCode: '200'
+            SelectionPattern: ''
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: '''*'''
+            ResponseTemplates: {}
+          - StatusCode: '400'
+            SelectionPattern: '.*"httpStatus":400.*'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: '''*'''
+            ResponseTemplates:
+              application/json: >
+                #set($errorMessageObj =
+                $util.parseJson($input.path('$.errorMessage')))
+
+                {
+                    "statusCode": $errorMessageObj.httpStatus,
+                    "type": "$errorMessageObj.type",
+                    "cause": "$errorMessageObj.cause"
+                }
+          - StatusCode: '401'
+            SelectionPattern: '.*"httpStatus":401.*'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: '''*'''
+            ResponseTemplates:
+              application/json: >
+                #set($errorMessageObj =
+                $util.parseJson($input.path('$.errorMessage')))
+
+                {
+                    "statusCode": $errorMessageObj.httpStatus,
+                    "type": "$errorMessageObj.type",
+                    "cause": "$errorMessageObj.cause"
+                }
+          - StatusCode: '500'
+            SelectionPattern: '.*"httpStatus":500.*'
+            ResponseParameters:
+              method.response.header.Access-Control-Allow-Origin: '''*'''
+            ResponseTemplates:
+              application/json: >
+                #set($errorMessageObj =
+                $util.parseJson($input.path('$.errorMessage')))
+
+                {
+                    "statusCode": $errorMessageObj.httpStatus,
+                    "type": "$errorMessageObj.type",
+                    "cause": "$errorMessageObj.cause"
+                }                  
+      MethodResponses:
+        - ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+          ResponseModels: {}
+          StatusCode: '200'
+        - ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+          ResponseModels: {}
+          StatusCode: '400'
+        - ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+          ResponseModels: {}
+          StatusCode: '401'
+        - ResponseParameters:
+            method.response.header.Access-Control-Allow-Origin: true
+          ResponseModels: {}
+          StatusCode: '500'
+    DependsOn:
+      - FuncLambdaPermissionApiGateway
+  ApiGatewayDeployment1650920518795:
+    Type: 'AWS::ApiGateway::Deployment'
+    Properties:
+      RestApiId: ubyh63c352
+      StageName: dev
+    DependsOn:
+      - ApiGatewayMethodRefreshOptions
+      - ApiGatewayMethodRefreshGet
+  FuncLambdaPermissionApiGateway:
+    Type: 'AWS::Lambda::Permission'
+    Properties:
+      FunctionName: !GetAtt 
+        - FuncLambdaFunction
+        - Arn
+      Action: 'lambda:InvokeFunction'
+      Principal: apigateway.amazonaws.com
+      SourceArn: !Join 
+        - ''
+        - - 'arn:'
+          - !Ref 'AWS::Partition'
+          - ':execute-api:'
+          - !Ref 'AWS::Region'
+          - ':'
+          - !Ref 'AWS::AccountId'
+          - ':'
+          - ubyh63c352
+          - /*/*
+Outputs:
+  ServerlessDeploymentBucketName:
+    Value: craitzus-veliti
+    Export:
+      Name: sls-lambda-authorizer-refresh-dev-dev-ServerlessDeploymentBucketName
+  FuncLambdaFunctionQualifiedArn:
+    Description: Current Lambda function version
+    Value: !Ref FuncLambdaVersionYPi1uD8JRrMVbyVVGatLeIkWNk4473peRRE9olTxs
+    Export:
+      Name: sls-lambda-authorizer-refresh-dev-dev-FuncLambdaFunctionQualifiedArn
+  ServiceEndpoint:
+    Description: URL of the service endpoint
+    Value: !Join 
+      - ''
+      - - 'https://'
+        - ubyh63c352
+        - .execute-api.
+        - !Ref 'AWS::Region'
+        - .
+        - !Ref 'AWS::URLSuffix'
+        - /dev
+    Export:
+      Name: sls-lambda-authorizer-refresh-dev-dev-ServiceEndpoint

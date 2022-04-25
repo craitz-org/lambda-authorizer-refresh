@@ -41,7 +41,7 @@ function buildCustomError(httpStatus, cause) {
 async function refreshToken(clientId, poolId, token) {
     try {
         const data = await cognitoidentityserviceprovider.adminInitiateAuth({
-            AuthFlow: 'REFRESH_TOKEN',
+            AuthFlow: 'REFRESH_TOKEN_AUTH',
             ClientId: clientId,
             UserPoolId: poolId,
             AuthParameters: {
@@ -67,11 +67,23 @@ async function refreshToken(clientId, poolId, token) {
 
 exports.handler = async (event, context) => {
     try {
+        console.log(JSON.stringify({
+            clientid: '4icqdo0ia8ifbvmfpv0ptgt9s1',
+            poolid: 'us-east-1_YYTAAxPEa',
+            token: event.headers.Authorization
+        }));
+
         return await refreshToken(
-            process.env.CLIENTID,
-            process.env.POOLID,
+            '4icqdo0ia8ifbvmfpv0ptgt9s1',
+            'us-east-1_YYTAAxPEa',
             event.headers.Authorization
         );
+
+        // return await refreshToken(
+        //     process.env.CLIENTID,
+        //     process.env.POOLID,
+        //     event.headers.Authorization
+        // );
     } catch (err) {
         throw err;
     }
