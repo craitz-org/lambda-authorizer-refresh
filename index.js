@@ -76,6 +76,8 @@ async function authorizeUser(clientId, poolId, username, password) {
 
 exports.handler = async (event, context) => {
     try {
+        console.log('event', event);
+
         console.log({
             env: process.env.STAGE,
             poolId: process.env.POOLID,
@@ -88,6 +90,8 @@ exports.handler = async (event, context) => {
             message: "success"
         }
     } catch (err) {
-      throw err;
+        throw JSON.stringify({
+          err
+        });
     }
 };

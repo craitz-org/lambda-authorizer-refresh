@@ -1,13 +1,8 @@
 ### dev
 
-POST https://ubyh63c352.execute-api.us-east-1.amazonaws.com/dev/v1/token
-Content-Type: application/x-www-form-urlencoded
-
-clientId=4icqdo0ia8ifbvmfpv0ptgt9s1
-&poolId=us-east-1_YYTAAxPEa
-&username=veliti
-&password=velitipass
-
+GET https://ucrw9xjluh.execute-api.us-east-1.amazonaws.com/prd/refresh
+Content-Type: application/json
+Authorization: Bearer xxx
 ### prod
 
 POST https://ucrw9xjluh.execute-api.us-east-1.amazonaws.com/prd/v1/token
