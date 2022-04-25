@@ -3,7 +3,7 @@ name: Deploy Development
 on:
   push:
     branches:
-      - main
+    - main
 
 env:
   STAGE_NAME: prd
