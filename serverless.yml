@@ -14,9 +14,6 @@ provider:
   role: arn:aws:iam::248567781489:role/lambda-authorizer-role
   deploymentBucket:
     name: craitzus-veliti
-  apiGateway:
-    restApiId: ${file(./config.${opt:stage, 'dev'}.json):restApiId}
-    restApiRootResourceId: ${file(./config.${opt:stage, 'dev'}.json):restApiRootResourceId}
   environment:
     STAGE: ${opt:stage, 'dev'}
     POOLID: ${file(./config.${opt:stage, 'dev'}.json):poolid}
@@ -38,7 +35,7 @@ functions:
         - '!test/**'
         - '!*.http'
         - '!template.yml'
-        # - '!config.*.json'
+        - '!config.*.json'
         - '!package*.json'
     events:
       - http:
