@@ -26,7 +26,7 @@ functions:
   func:
     handler: index.handler
     name: ${self:custom.lambda_name}
-    memorySize: 256
+    memorySize: 128
     timeout: 30
     description: Refresh token for authorization microservice
     environment:
