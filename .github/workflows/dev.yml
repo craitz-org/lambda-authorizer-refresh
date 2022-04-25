@@ -8,8 +8,8 @@ on:
 env:
   STAGE_NAME: dev
   AWS_REGION: us-east-1
-  POOL_ID: ${{ secrets.GHACTIONS_POOLID_DEV }}
-  CLIENT_ID: ${{ secrets.GHACTIONS_CLIENTID_DEV }}
+  POOL_ID: ${{ secrets.GHACTIONS_POOLID }}
+  CLIENT_ID: ${{ secrets.GHACTIONS_CLIENTID }}
 
 jobs:
   deploy_lambda:
