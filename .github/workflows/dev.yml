@@ -9,9 +9,9 @@ env:
   STAGE_NAME: dev
   STAGE_NAME_UPPER: DEV
   AWS_REGION: us-east-1
-  RESTAPI_ID: ubyh63c352,
+  RESTAPI_ID: ubyh63c352
   RESTAPI_ROOT_ID: 8sgb7a887g
-  
+
 jobs:
   deploy_lambda:
     runs-on: ubuntu-18.04
