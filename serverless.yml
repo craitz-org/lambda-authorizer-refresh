@@ -42,7 +42,7 @@ functions:
         - '!package*.json'
     events:
       - http:
-          path: v1/refresh
+          path: refresh
           method: get
           cors: true
           integration: lambda
