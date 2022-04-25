@@ -7,10 +7,9 @@ on:
 
 env:
   STAGE_NAME: prd
-  STAGE_NAME_UPPER: PRD
   AWS_REGION: us-east-1
-  POOL_ID: ${{ secrets.GHACTIONS_POOLID_$STAGE_NAME_UPPER }}
-  CLIENT_ID: ${{ secrets.GHACTIONS_CLIENTID_${STAGE_NAME_UPPER} }}
+  POOL_ID: ${{ secrets.GHACTIONS_POOLID_PRD }}
+  CLIENT_ID: ${{ secrets.GHACTIONS_CLIENTID_PRD }}
   RESTAPI_ID: ucrw9xjluh
   RESTAPI_ROOT_ID: czquit0hs4
 
