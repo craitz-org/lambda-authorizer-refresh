@@ -5,9 +5,6 @@ const AWS = require('aws-sdk');
 const cognitoProviderLib = require('aws-sdk/clients/cognitoidentityserviceprovider');
 const cognitoidentityserviceprovider = new cognitoProviderLib();
 
-// global vars
-const globals = {};
-
 function buildCustomError(httpStatus, cause) {
   switch (httpStatus) {
       case 400: {
@@ -41,29 +38,23 @@ function buildCustomError(httpStatus, cause) {
   }
 }
 
-async function authorizeUser(clientId, poolId, username, password) {
+async function refreshToken(clientId, poolId, token) {
     try {
-      // perform authorization on Cognito user pool
         const data = await cognitoidentityserviceprovider.adminInitiateAuth({
-            AuthFlow: 'ADMIN_NO_SRP_AUTH',
+            AuthFlow: 'REFRESH_TOKEN',
             ClientId: clientId,
             UserPoolId: poolId,
             AuthParameters: {
-                USERNAME: username,
-                PASSWORD: password            
+                REFRESH_TOKEN: token
             }
         }).promise();
 
         if (!data) {
-            throw buildCustomError(500, `Erro inesperado autenticando o usuário ${username} no Cognito`);
+            throw buildCustomError(500, `Erro inesperado atualizando o token no Cognito`);
         }
 
-        // return access token
         return {
-            access_token: data.AuthenticationResult.IdToken,
-            token_type: 'Bearer',
-            expires_in: 3600,
-            scope: globals.stage
+            accessToken: data.AuthenticationResult.IdToken,
         };
     } catch (err) {
         if (err.code === 'NotAuthorizedException') {
@@ -76,22 +67,12 @@ async function authorizeUser(clientId, poolId, username, password) {
 
 exports.handler = async (event, context) => {
     try {
-        console.log('event', event);
-
-        console.log({
-            env: process.env.STAGE,
-            poolId: process.env.POOLID,
-            clientId: process.env.CLIENTID
-        });
-
-        const a = 0;
-
-        return {
-            message: "success"
-        }
+        return await refreshToken(
+            process.env.CLIENTID,
+            process.env.POOLID,
+            event.headers.Authorization
+        );
     } catch (err) {
-        throw JSON.stringify({
-          err
-        });
+        throw err;
     }
 };
