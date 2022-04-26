@@ -80,12 +80,6 @@ exports.handler = async (event, context) => {
         // parse x-www-form-urlencoded
         const { clientId, poolId, refreshToken: token } = parser.fromQuery(event['body-json'])
 
-        console.log({
-            clientId, 
-            poolId, 
-            token
-        });
-
         // refresh token
         return await refreshToken(clientId, poolId, token);
     } catch (err) {
