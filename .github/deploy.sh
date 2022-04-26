@@ -7,6 +7,10 @@ set -x
 alias_name=$1
 function_name="lambda-authorizer-${alias_name}"
 
+# clean deploy
+result=$(sls remove --stage ${alias_name})
+echo "${result}"
+
 # serverless deploy
 result=$(sls deploy --stage ${alias_name})
 echo "${result}"

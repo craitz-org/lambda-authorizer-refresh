@@ -54,7 +54,7 @@ async function refreshToken(clientId, poolId, token) {
         }).promise();
 
         if (!data) {
-            throw buildCustomError(500, `Erro inesperado atualizando o token no Cognito`);
+            throw buildCustomError(500, `Unexpected error refreshing token on Cognito`);
         }
 
         return {
