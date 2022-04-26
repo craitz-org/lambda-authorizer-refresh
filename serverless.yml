@@ -17,14 +17,12 @@ provider:
     name: craitzus-veliti
   environment:
     STAGE: ${opt:stage, 'dev'}
-    POOLID: ${file(./config.${opt:stage, 'dev'}.json):poolid}
-    CLIENTID: ${file(./config.${opt:stage, 'dev'}.json):clientid}
 
 functions:
   func:
     handler: index.handler
     name: ${self:custom.lambda_name}
-    memorySize: 128
+    memorySize: 256
     timeout: 30
     description: Refresh token for authorization microservice
     environment:
@@ -41,11 +39,15 @@ functions:
     events:
       - http:
           path: refresh
-          method: get
+          method: post
           cors: true
           integration: lambda
           request:
             template:
+              application/x-www-form-urlencoded: >
+                { 
+                  "body-json": $input.json("$") 
+                }
               application/json: >
                 #set( $body = $input.json("$") )
 

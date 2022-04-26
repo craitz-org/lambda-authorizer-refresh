@@ -1,9 +1,13 @@
 // layers
 const AWS = require('aws-sdk');
+const parser = require('query-string-parser')
 
 // AWS services
 const cognitoProviderLib = require('aws-sdk/clients/cognitoidentityserviceprovider');
 const cognitoidentityserviceprovider = new cognitoProviderLib();
+
+// global vars
+const globals = {};
 
 function buildCustomError(httpStatus, cause) {
   switch (httpStatus) {
@@ -54,7 +58,10 @@ async function refreshToken(clientId, poolId, token) {
         }
 
         return {
-            accessToken: data.AuthenticationResult.IdToken,
+            access_token: data.AuthenticationResult.IdToken,
+            token_type: 'Bearer',
+            expires_in: 3600,
+            scope: globals.stage
         };
     } catch (err) {
         if (err.code === 'NotAuthorizedException') {
@@ -67,11 +74,14 @@ async function refreshToken(clientId, poolId, token) {
 
 exports.handler = async (event, context) => {
     try {
-        return await refreshToken(
-            process.env.CLIENTID,
-            process.env.POOLID,
-            event.headers.Authorization
-        );
+        // get stage from serverless deploy
+        globals.stage = process.env.STAGE;
+
+        // parse x-www-form-urlencoded
+        const { clientId, poolId } = parser.fromQuery(event['body-json'])
+
+        // refresh token
+        return await refreshToken(clientId, poolId, event.headers.Authorization);
     } catch (err) {
         throw err;
     }
