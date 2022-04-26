@@ -78,16 +78,16 @@ exports.handler = async (event, context) => {
         globals.stage = process.env.STAGE;
 
         // parse x-www-form-urlencoded
-        const { clientId, poolId, refreshToken } = parser.fromQuery(event['body-json'])
+        const { clientId, poolId, refreshToken: token } = parser.fromQuery(event['body-json'])
 
         console.log({
             clientId, 
             poolId, 
-            refreshToken
+            token
         });
 
         // refresh token
-        return await refreshToken(clientId, poolId, refreshToken);
+        return await refreshToken(clientId, poolId, token);
     } catch (err) {
         throw err;
     }
